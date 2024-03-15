@@ -23,6 +23,6 @@ export const prosConsDiscusserStreamUseCase = async (
     ],
     temperature: 0.8,
     max_tokens: 500,
-    model: 'gpt-4',
+    model: 'gpt-3.5-turbo',
   });
 };
