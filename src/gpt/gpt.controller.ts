@@ -18,6 +18,8 @@ import { diskStorage } from 'multer';
 
 import {
   AudioToTextDto,
+  ImageGenerationDto,
+  ImageVariationDto,
   OrtographyDto,
   ProsConsDiscusserDto,
   TextToAudioDto,
@@ -119,5 +121,25 @@ export class GptController {
     @Body() audioToTextDto: AudioToTextDto,
   ) {
     return await this.gptService.audioToText(file, audioToTextDto);
+  }
+
+  @Post('image-generation')
+  async imageGeneration(@Body() imageGenerationDto: ImageGenerationDto) {
+    return await this.gptService.imageGeneration(imageGenerationDto);
+  }
+
+  @Get('image-generation/:filename')
+  async getGeneratedImage(
+    @Param('filename') filename: string,
+    @Res() res: Response,
+  ) {
+    const imageFile = this.gptService.imageGenerationGetter(filename);
+    res.status(HttpStatus.OK);
+    res.sendFile(imageFile);
+  }
+
+  @Post('image-variation')
+  async imageVariation(@Body() imageVariationDto: ImageVariationDto) {
+    return await this.gptService.imageVariation(imageVariationDto);
   }
 }
