@@ -6,11 +6,13 @@ import OpenAI from 'openai';
 
 import {
   audioToTextUseCase,
+  employeeCheckUseCase,
   imageGenerationUseCase,
   imageVariationUseCase,
   ortographyCheckUseCase,
   prosConsDiscusserStreamUseCase,
   prosConsDiscusserUseCase,
+  purchaseReceiptHeaderFromTextUseCase,
   textToAudioUseCase,
   translateUseCase,
 } from './use-cases';
@@ -23,6 +25,7 @@ import {
   TextToAudioDto,
   TranslateDto,
 } from './dtos';
+import { PurchaseReceipt } from 'src/common/interfaces/index';
 
 @Injectable()
 export class GptService {
@@ -110,5 +113,15 @@ export class GptService {
 
   async imageVariation({ baseImage }: ImageVariationDto) {
     return await imageVariationUseCase(this.openai, { baseImage });
+  }
+
+  async purchaseReceiptHeaderFromText(text: string): Promise<PurchaseReceipt> {
+    return await purchaseReceiptHeaderFromTextUseCase(this.openai, { text });
+  }
+
+  async employeeCheck({ file }: { file: Express.Multer.File }): Promise<any> {
+    return await employeeCheckUseCase(this.openai, {
+      file,
+    });
   }
 }

@@ -142,4 +142,36 @@ export class GptController {
   async imageVariation(@Body() imageVariationDto: ImageVariationDto) {
     return await this.gptService.imageVariation(imageVariationDto);
   }
+
+  @Post('employee-check')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './generated/uploads',
+        filename: (req, file, callback) => {
+          const fileExtension = file.originalname.split('.').pop();
+          const filename = `${new Date().getTime()}.${fileExtension}`;
+          return callback(null, filename);
+        },
+      }),
+    }),
+  )
+  async employeeCheck(
+    @UploadedFile(
+      new ParseFilePipe({
+        validators: [
+          new MaxFileSizeValidator({
+            maxSize: 1024 * 1024 * 6,
+            message: 'File is bigger than 6MB',
+          }),
+          new FileTypeValidator({
+            fileType: 'image/*',
+          }),
+        ],
+      }),
+    )
+    file: Express.Multer.File,
+  ) {
+    return await this.gptService.employeeCheck({ file });
+  }
 }

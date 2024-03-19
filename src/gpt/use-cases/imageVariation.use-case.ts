@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
-import { downloadImageAsPng } from 'src/helpers';
 import * as fs from 'fs';
+
+import { downloadImageAsPng } from '@common/helpers';
 
 interface Options {
   baseImage: string;

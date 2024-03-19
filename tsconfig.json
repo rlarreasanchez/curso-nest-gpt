@@ -3,6 +3,12 @@
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
+    "paths": {
+      "@common/*": ["src/common/*"],
+      "@erp/*": ["src/erp/*"],
+      "@ocr/*": ["src/ocr/*"],
+      "@gpt/*": ["src/gpt/*"]
+    },
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,

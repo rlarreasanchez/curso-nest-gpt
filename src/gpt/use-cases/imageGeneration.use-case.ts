@@ -1,6 +1,7 @@
 import OpenAI from 'openai';
-import { downloadBase64ImageAsPng, downloadImageAsPng } from 'src/helpers';
 import * as fs from 'fs';
+
+import { downloadBase64ImageAsPng, downloadImageAsPng } from '@common/helpers';
 
 interface Options {
   prompt: string;
@@ -13,7 +14,6 @@ export const imageGenerationUseCase = async (
   options: Options,
 ) => {
   const { prompt, originalImage, maskImage } = options;
-  console.log({ prompt, originalImage, maskImage });
 
   if (!originalImage || !maskImage) {
     const response = await openai.images.generate({

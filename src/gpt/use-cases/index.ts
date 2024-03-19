@@ -6,3 +6,5 @@ export * from './translate.use-case';
 export * from './textToAudio.use-case';
 export * from './imageGeneration.use-case';
 export * from './imageVariation.use-case';
+export * from './purchaseReceiptHeaderFromText.use-case';
+export * from './employeeCheck.use-case';
