@@ -9,6 +9,7 @@ export interface PurchaseReceiptErpLine {
   noLinea: number;
   naturaleza: string;
   cantidad: number;
+  cantidadRecibida: number;
   unidadMedida: string;
   costeUnitario: number;
   descripcion: string;

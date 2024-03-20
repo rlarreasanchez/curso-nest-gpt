@@ -3,7 +3,7 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { PurchaseReceipt } from '@common/interfaces/purchases.interface';
 import { ErpService } from '@erp/erp.service';
 import { GptService } from '@gpt/gpt.service';
-import { getOcrText } from './helpers/tesseract.helper';
+import { getOcrText, getRegexPedido } from './helpers';
 import { PurchaseReceiptDto } from './dtos';
 
 @Injectable()
@@ -18,51 +18,47 @@ export class OcrService {
     purchaseReceiptDto: PurchaseReceiptDto,
   ): Promise<PurchaseReceipt | null> {
     const { withIA = false } = purchaseReceiptDto;
-    let ocrObject: PurchaseReceipt = {};
+    let ocrPurchaseReceipt: PurchaseReceipt = {};
 
-    // Obtener el texto del OCR
     const ocrText = await getOcrText(file);
+    const pedidoFromRegex = getRegexPedido(ocrText);
 
-    // Buscar el pedido en el texto
-    const found = ocrText.match(/PCO\d{2}-\d{4}/);
-    const pedidoFromRegex = found ? found[0] : null;
-
-    ocrObject = { pedido: pedidoFromRegex };
+    ocrPurchaseReceipt = { pedido: pedidoFromRegex };
 
     if (withIA) {
-      // Obtener el pedido de OpenAI
-      const openaiObject =
+      // Obtener parámetros por IA
+      const iaPunchaseReceipt =
         await this.gptService.purchaseReceiptHeaderFromText(ocrText);
-      if (openaiObject) {
-        ocrObject = { ...openaiObject };
+      if (iaPunchaseReceipt) {
+        ocrPurchaseReceipt = { ...iaPunchaseReceipt };
       }
     }
 
-    if (!ocrObject.pedido)
+    if (!ocrPurchaseReceipt.pedido)
       throw new HttpException(
         'Error processing the image',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
 
-    const products = await this.erpService.getPurchaseReceiptLines(
-      ocrObject.pedido,
+    const productsFromErp = await this.erpService.getPurchaseReceiptLines(
+      ocrPurchaseReceipt.pedido,
     );
 
-    const obras = products
+    const obras = productsFromErp
       .map((product) => product.obra)
       .filter(function (v, i, self) {
         return i == self.indexOf(v);
       });
 
-    const pedidoData = await this.erpService.getPurchaseReceiptData(
-      ocrObject.pedido,
+    const purchaseReceiptData = await this.erpService.getPurchaseReceiptData(
+      ocrPurchaseReceipt.pedido,
     );
 
     return {
-      ...ocrObject,
-      ...pedidoData,
+      ...ocrPurchaseReceipt,
+      ...purchaseReceiptData,
       obra: obras.length === 1 ? obras[0] : null,
-      products,
+      products: productsFromErp,
     };
   }
 }

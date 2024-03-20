@@ -11,6 +11,7 @@ export interface PurchaseReceipt {
 export interface PurchaseReceiptProduct {
   id: string;
   cantidad: number;
+  cantidadRecibida: number;
   descripcion: string;
   precio: number;
   total: number;

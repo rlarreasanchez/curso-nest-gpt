@@ -39,6 +39,7 @@ export class ErpService {
       return purchaseReceiptsResponse.map((line) => ({
         id: line.noLinea.toString(),
         cantidad: line.cantidad,
+        cantidadRecibida: line.cantidadRecibida,
         descripcion: line.descripcion,
         precio: line.costeUnitario,
         total: line.importe,
